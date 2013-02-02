@@ -23,10 +23,7 @@ public class Model {
     private List<Spring> mySprings;
     private List<Muscle> myMuscles;
     private List<Vector> myForces;
-    
-    //private Gravity myGravity;
-    //private CenterMass myCenterMass;
-    //private Wall myWall;
+
     
     /**
      * Create a game of the given size with the given display for its shapes.
@@ -71,8 +68,6 @@ public class Model {
         for (Mass m : myMasses) {
             m.update(elapsedTime, bounds);
         }
-        //myGravity.update(elapsedTime, bounds, myMasses);
-        
     }
 
     /**
@@ -93,21 +88,19 @@ public class Model {
     	myMuscles.add(muscle);
     }
     
-    public void add (Gravity gravity){
-    	myForces.add(gravity);
-    	//myGravity = gravity;
+    public void add (GravityForce gravityForce){
+    	myForces.add(gravityForce);
     }
     
-    public void add (CenterMass centerMass){
-    	myForces.add(centerMass);
-    	//myCenterMass = centerMass;
+    public void add (ViscosityForce viscosityForce){
+    	myForces.add(viscosityForce);
     }
-    public void add(Wall wall){
-    	myForces.add(wall);
-    	//myWall = wall;
+    
+    public void add (CenterMassForce centerMassForce){
+    	myForces.add(centerMassForce);
     }
-    public Canvas getCanvas(){
-    	return myView;
+    public void add(WallForce wallForce){
+    	myForces.add(wallForce);
     }
     
 }

@@ -7,7 +7,8 @@ import util.Sprite;
 
 public class Muscle extends Spring {
 	
-	private double pie = 0;
+	private double myPie = 0;
+	private double myFrequency = 0.1; //can be user input later on;
 	private double myAmplitude;
 	
 	public Muscle(Mass start, Mass end, double length, double kVal, double amplitude) {
@@ -17,9 +18,8 @@ public class Muscle extends Spring {
 	
 	public void update(double elapsedTime, Dimension bounds){
 		
-		updateMyLength(myAmplitude*Math.sin(pie));
-		pie += 0.1;
-		//update myLength
+		updateMyLength(myAmplitude*Math.sin(myPie)); //update free length of Muscle;
+		myPie += myFrequency;
 		
 		super.update(elapsedTime, bounds);
 	}

@@ -56,19 +56,15 @@ public class Spring extends Sprite {
         // apply hooke's law to each attached mass
         Vector force = new Vector(Vector.angleBetween(dx, dy), 
                                   myK * (myLength - Vector.distanceBetween(dx, dy)));
-        if (myStart.getMass()>=0){ // see if it's FixedMass
-        	myStart.applyForce(force);
-        }
+        myStart.applyForce(force);
         force.negate();
-        if (myEnd.getMass()>=0){ // see if it's FixedMass
-            myEnd.applyForce(force);
-        }
+        myEnd.applyForce(force);
         // update sprite values based on attached masses
         setCenter(getCenter(myStart, myEnd));
         setSize(getSize(myStart, myEnd));
         setVelocity(Vector.angleBetween(dx, dy), 0);
         
-        resetLength();
+        resetLength(); //used for Muscle
     }
     
     public void resetLength(){
@@ -76,7 +72,7 @@ public class Spring extends Sprite {
     }
     
     public void updateMyLength(double addLength){
-    	myLength+= addLength;
+    	myLength += addLength;
     }
     
     /**

@@ -1,3 +1,4 @@
 centermass 50 5.0
+viscosity 30
 gravity 90 1
-wall 3 1000 2.0
+wall 3 100 2.0
