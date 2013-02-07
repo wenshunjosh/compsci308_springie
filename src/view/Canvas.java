@@ -56,13 +56,15 @@ public class Canvas extends JComponent {
     private int myLastKeyPressed;
     private Point myLastMousePosition;
     private Set<Integer> myKeys;
+    private Dimension myGameBound;
 
 
     /**
      * Create a panel so that it knows its size
      */
     public Canvas (Dimension size) {
-        // set size (a bit of a pain)
+        myGameBound = getSize();
+    	// set size (a bit of a pain)
         setPreferredSize(size);
         setSize(size);
         // prepare to receive input
@@ -143,6 +145,16 @@ public class Canvas extends JComponent {
         // indirectly causes paint to be called
         repaint();
     }
+    
+    public Dimension getGameSize(){	
+    	return myGameBound;
+    }
+    
+    public void setGameSize(int pixel){
+    	double x = myGameBound.getWidth()+pixel;
+    	double y = myGameBound.getHeight()+pixel;
+    	myGameBound = new Dimension((int)x,(int)y);
+    }
 
     /**
      * Create listeners that will update state based on user input.
@@ -184,13 +196,9 @@ public class Canvas extends JComponent {
     }
 
     // load model from file chosen by user
-    private void loadModel () {
+    public void loadModel () { //changed to public for load multiple assemblies.
         Factory factory = new Factory();
         int response = INPUT_CHOOSER.showOpenDialog(null);
-        if (response == JFileChooser.APPROVE_OPTION) {
-            factory.loadModel(mySimulation, INPUT_CHOOSER.getSelectedFile());
-        }
-        response = INPUT_CHOOSER.showOpenDialog(null);
         if (response == JFileChooser.APPROVE_OPTION) {
             factory.loadModel(mySimulation, INPUT_CHOOSER.getSelectedFile());
         }

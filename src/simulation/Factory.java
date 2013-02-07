@@ -76,7 +76,7 @@ public class Factory {
         double mass = line.nextDouble();
         if (mass<0){
         	FixedMass result = new FixedMass(x,y,mass);
-        	myMasses.put(id,  result);
+        	myMasses.put(id,  result); //tiny duplicated code here
         	return result;
         }else{
         	Mass result = new Mass(x, y, mass);

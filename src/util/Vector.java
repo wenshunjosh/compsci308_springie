@@ -20,13 +20,15 @@ public class Vector {
     private double myAngle;
     // "speed" in pixels per second
     private double myMagnitude;
-
+    
+    private boolean myStatus;
 
     /**
      * Create a zero vector, i.e., with no magnitude.
      */
     public Vector () {
         this(0, 0);
+        myStatus = true;
     }
 
     /**
@@ -35,6 +37,7 @@ public class Vector {
     public Vector (double angle, double magnitude) {
         setDirection(angle);
         setMagnitude(magnitude);
+        myStatus = true;
     }
 
     /**
@@ -265,4 +268,21 @@ public class Vector {
     public void update(double elapsedTime, Dimension bounds, List<Mass> allMasses){
     	return;
     }
+    
+    public void setStatus(boolean status){
+		myStatus = status;
+	}
+	
+    public boolean getStatus(){
+    	return myStatus;
+    }
+    
+	public void setOppositeStatus(){ //duplicated code????? (same in other forces)
+										//also have to create one in Vector to all at the same time
+		if (myStatus){
+			myStatus = false;
+		}else{
+			myStatus = true;
+		}
+	}
 }

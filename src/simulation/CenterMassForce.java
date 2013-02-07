@@ -7,22 +7,33 @@ import util.Location;
 import util.Vector;
 
 public class CenterMassForce extends Vector {
+	private static final double DEFAULT_EXPONENT = 90;
+	private static final double DEFAULT_MAGNITUDE = 100;
+	
 	private double myMagnitude;
 	private double myExponent;
+	
+	public CenterMassForce(){
+		myExponent = DEFAULT_EXPONENT;
+		myMagnitude = DEFAULT_MAGNITUDE;
+		setStatus(false);
+	}
 	
 	public CenterMassForce (double magnitude, double exponent) {
 		myExponent = exponent;
 		myMagnitude = magnitude;
+		setStatus(true);
 	}
 	
 	public void update (double elapsedTime, Dimension bounds, List<Mass> allMasses){
-		Location center = getCenter(allMasses);
-		for (Mass m: allMasses){
-			double angle = angleBetween(center.x-m.getX(), center.y-m.getY());
-			double distance = Math.sqrt((center.x-m.getX())*(center.x-m.getX()) + (center.y-m.getY())* (center.y-m.getY()));
-			Vector force = new Vector(angle, myMagnitude/distance*myExponent);
-					//I hope the formula is correct.
-			m.applyForce(force);
+		if (getStatus()){
+			Location center = getCenter(allMasses);
+			for (Mass m: allMasses){
+				double angle = angleBetween(center.x-m.getX(), center.y-m.getY());
+				double distance = Math.sqrt((center.x-m.getX())*(center.x-m.getX()) + (center.y-m.getY())* (center.y-m.getY()));
+				Vector force = new Vector(angle, myMagnitude/distance*myExponent);
+				m.applyForce(force);
+			}
 		}
 	}
 	
