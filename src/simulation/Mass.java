@@ -3,6 +3,8 @@ package simulation;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
+
 import util.Location;
 import util.Pixmap;
 import util.Sprite;
@@ -68,7 +70,7 @@ public class Mass extends Sprite {
         // this is a little awkward, so hide it
         return new Location(getX(), getY()).distance(new Location(other.getX(), other.getY()));
     }
-
+    
     /**
      * Get mass. Use to test if the Mass is a Fixed Mass.
      */

@@ -2,7 +2,9 @@ package simulation;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -35,15 +37,20 @@ public class Model {
 	// bounds and input for game
     private Canvas myView;
     // simulation state
-    private List<Mass> myMasses;
-    private List<Spring> mySprings;
+    private List<ArrayList<Mass>> myAssembly = new ArrayList<ArrayList<Mass>>();
+    private int myAssemblyNumber = 0;
+    private List<Spring> mySprings = new ArrayList<Spring>();
     private Vector[] myForces = {new GravityForce(), new ViscosityForce(), new CenterMassForce(),
     							new WallForce(1), new WallForce(2), new WallForce(3), new WallForce(4)};
-    private List<Integer> myForcesToggleKeys = new ArrayList<Integer>();
+    private Integer[] myForcesToggleKeys = {GRAVITY_TOGGLE, VISCOSITY_TOGGLE, CENTER_MASS_TOGGLE,
+    							WALL_TOP_TOGGLE, WALL_RIGHT_TOGGLE, WALL_BOTTOM_TOGGLE, WALL_LEFT_TOGGLE};
     private int[] myWallSizeAdaptors = {10, -10};
-    private List<Integer> myWallSizeKeys = new ArrayList<Integer>();
-    private Long myTimer1;
-	private Long myTimer2;
+    private Integer[] myWallSizeKeys = {INCREASE_WALL_SIZE, DECREASE_WALL_SIZE};
+    private Long myCoolDownTimer1;
+	private Long myCoolDownTimer2;
+	
+	private Mass myMouseMass; //created for mouse interaction
+	private Spring myMouseSpring;
 
     
     /**
@@ -51,18 +58,7 @@ public class Model {
      */
     public Model (Canvas canvas) {
         myView = canvas;
-        myMasses = new ArrayList<Mass>();
-        mySprings = new ArrayList<Spring>();
-        myForcesToggleKeys.add(GRAVITY_TOGGLE);
-        myForcesToggleKeys.add(VISCOSITY_TOGGLE);
-        myForcesToggleKeys.add(CENTER_MASS_TOGGLE);
-        myForcesToggleKeys.add(WALL_TOP_TOGGLE);
-        myForcesToggleKeys.add(WALL_RIGHT_TOGGLE);
-        myForcesToggleKeys.add(WALL_BOTTOM_TOGGLE);
-        myForcesToggleKeys.add(WALL_LEFT_TOGGLE);
-        myWallSizeKeys.add(INCREASE_WALL_SIZE);
-        myWallSizeKeys.add(DECREASE_WALL_SIZE);
-        myTimer1 = System.currentTimeMillis();
+        myCoolDownTimer1 = System.currentTimeMillis();
     }
 
     /**
@@ -72,8 +68,16 @@ public class Model {
         for (Spring s : mySprings) {
             s.paint(pen);
         }
-        for (Mass m : myMasses) {
-            m.paint(pen);
+        for (ArrayList<Mass> masses: myAssembly){
+        	for (Mass m : masses) {
+                m.paint(pen);
+            }
+        }
+        if(myMouseSpring != null){
+        	myMouseSpring.paint(pen);
+        }
+        if(myMouseMass != null){
+        	myMouseMass.paint(pen);
         }
     }
 
@@ -81,43 +85,95 @@ public class Model {
      * Update simulation for this moment, given the time since the last moment.
      */
     public void update (double elapsedTime) {
-        Dimension bounds = myView.getGameSize(); //update in order to change size
+        Dimension bounds = myView.getGameSize(); //update in case user updates bound size
+        myCoolDownTimer2 = System.currentTimeMillis(); //"Cools down" the keyboard so one press will only result in one update.
+		if (myCoolDownTimer2-myCoolDownTimer1 >= KEY_COOL_DOWN_TIME){
+			myCoolDownTimer1 = myCoolDownTimer2;
+			int keyEvent = myView.getLastKeyPressed();
+				processKeyEvent(keyEvent);
+	        Point mouseEvent = myView.getLastMousePosition();
+	        processMouseEvent(mouseEvent);
+		}
         for (Spring s : mySprings) {
             s.update(elapsedTime, bounds);
         }
-        for (Vector v: myForces){
-        	v.update(elapsedTime, bounds, myMasses);
+        for (ArrayList<Mass> masses: myAssembly){
+        	for (Mass m : masses) {
+                m.update(elapsedTime, bounds);
+            }
+        	for (Vector v: myForces){
+            	v.update(elapsedTime, bounds, masses);
+            }
+        } 
+        if (myMouseSpring != null){
+        	myMouseSpring.update(elapsedTime, bounds);
+        } //myMouseMass follows the mouse movement. No need to update here
+    }
+    
+    
+    private void processMouseEvent(Point mouseEvent) {
+    	if (mouseEvent != null){
+    		if (myMouseMass == null){
+    			myMouseMass = new Mass(mouseEvent.getX(), mouseEvent.getY(), 50);
+    		}
+    		myMouseMass.setCenter(mouseEvent.getX(), mouseEvent.getY());
+    		if (myMouseSpring == null){
+    			myMouseSpring = calculateMouseDistanceAndCreateSpring(mouseEvent);
+    		}
+    		
+        }else{
+        	myMouseMass = null;
+        	myMouseSpring = null;
         }
-        for (Mass m : myMasses) {
-            m.update(elapsedTime, bounds);
-        }
-        myTimer2 = System.currentTimeMillis(); //"Cools down" the keyboard so one press will only result in one update.
-		if (myTimer2-myTimer1 >= KEY_COOL_DOWN_TIME){
-			myTimer1 = myTimer2;
-			int keyEvent = myView.getLastKeyPressed();
-	        if (keyEvent == CLEAR_ASSEMBLY){
-	        	mySprings = new ArrayList<Spring>();
-	        	myMasses = new ArrayList<Mass>();
-	        }
-	        if (keyEvent == NEW_ASSEMBLY){
-	        	//TODO
-	        }
-	        if(myForcesToggleKeys.contains(keyEvent)){
-	        	int keyEventIndex = myForcesToggleKeys.indexOf(keyEvent);
-	        	myForces[keyEventIndex].setOppositeStatus();
-	        }
-	        if(myWallSizeKeys.contains(keyEvent)){ //duplicate with the above if statement??
-	        	int keyEventIndex = myWallSizeKeys.indexOf(keyEvent);
-	        	myView.setGameSize(myWallSizeAdaptors[keyEventIndex]);
-	        }
-		}
+		
+	}
+    
+    private Spring calculateMouseDistanceAndCreateSpring(Point mouseEvent){
+    	Mass closest = null;
+    	double closestDistance = 500;
+    	for (ArrayList<Mass> masses: myAssembly){
+    		for (Mass m: masses){
+        		double distance = myMouseMass.distance(m);
+        		if (distance<closestDistance){
+        			closest = m;
+       				closestDistance = distance;
+        		}
+        	}
+    	}
+    	return new Spring(myMouseMass, closest, closestDistance, 0.5);
     }
 
-    /**
+	private void processKeyEvent(int keyEvent) {
+    	if (keyEvent == CLEAR_ASSEMBLY){
+        	mySprings = new ArrayList<Spring>();
+        	myAssembly = new ArrayList<ArrayList<Mass>>();
+        }
+        if (keyEvent == NEW_ASSEMBLY){
+        	myAssemblyNumber += 1;
+        	myView.loadModel();
+        	myView.clearInput();
+        }
+        List<Integer> myForcesToggleKeysArrayList = Arrays.asList(myForcesToggleKeys);
+        if(myForcesToggleKeysArrayList.contains(keyEvent)){
+        	int keyEventIndex = myForcesToggleKeysArrayList.indexOf(keyEvent);
+        	myForces[keyEventIndex].setOppositeOn();
+        }
+        List<Integer> myWallSizeKeysArrayList = Arrays.asList(myWallSizeKeys);
+        if(myWallSizeKeysArrayList.contains(keyEvent)){ //duplicate with the above if statement??
+        	int keyEventIndex = myWallSizeKeysArrayList.indexOf(keyEvent);
+        	myView.setGameSize(myWallSizeAdaptors[keyEventIndex]);
+        }
+	}
+
+	/**
      * Add given mass to this simulation.
      */
     public void add (Mass mass) {
-        myMasses.add(mass);
+        if (myAssembly.size() <= myAssemblyNumber){
+        	ArrayList<Mass> currentMassAssembly = new ArrayList<Mass>();
+        	myAssembly.add(currentMassAssembly);
+        }
+    	myAssembly.get(myAssemblyNumber).add(mass);
     }
 
     /**

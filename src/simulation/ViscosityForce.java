@@ -11,21 +11,19 @@ public class ViscosityForce extends Vector {
 	private double myMagnitude;
 	
 	public ViscosityForce(){
-		myMagnitude = DEFAULT_MAGNITUDE;
-		setStatus(false);
+		this(DEFAULT_MAGNITUDE);
+		setOn(false); //how to get rid of this repeated code?????
 	}
 	
 	public ViscosityForce (double magnitude) {
 		myMagnitude = magnitude;
-		setStatus(true);
+		setOn(true);
 	}
 	
-	public void update(double elapsedTime, Dimension bounds, List<Mass> allMasses){
-		if (getStatus()){
-			for (Mass m: allMasses){
-				Vector force=new Vector(m.getAcceleration().getDirection()*-1, myMagnitude);
-	    		m.applyForce(force);
-			}
+	public void updateForce(double elapsedTime, Dimension bounds, List<Mass> allMasses){
+		for (Mass m: allMasses){
+			Vector force=new Vector(m.getAcceleration().getDirection()*-1, myMagnitude);
+	   		m.applyForce(force);
 		}
 	}
 }

@@ -55,7 +55,7 @@ public class Spring extends Sprite {
         double dy = myStart.getY() - myEnd.getY();
         // apply hooke's law to each attached mass
         Vector force = new Vector(Vector.angleBetween(dx, dy), 
-                                  myK * (myLength - Vector.distanceBetween(dx, dy)));
+                                  myK * (getLength() - Vector.distanceBetween(dx, dy)));
         myStart.applyForce(force);
         force.negate();
         myEnd.applyForce(force);
@@ -71,8 +71,8 @@ public class Spring extends Sprite {
     	myLength = myOriginalLength;
     }
     
-    public void updateMyLength(double addLength){
-    	myLength += addLength;
+    public double getLength(){
+    	return myLength;
     }
     
     /**
@@ -83,7 +83,7 @@ public class Spring extends Sprite {
         else if (diff < 0.0) return Color.BLUE;
         else return Color.RED;
     }
-
+    
     // compute center of this spring
     private static Location getCenter (Mass start, Mass end) {
         return new Location((start.getX() + end.getX()) / 2, (start.getY() + end.getY()) / 2);

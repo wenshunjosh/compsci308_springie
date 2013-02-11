@@ -63,7 +63,7 @@ public class Canvas extends JComponent {
      * Create a panel so that it knows its size
      */
     public Canvas (Dimension size) {
-        myGameBound = getSize();
+        myGameBound = size;
     	// set size (a bit of a pain)
         setPreferredSize(size);
         setSize(size);
@@ -105,7 +105,13 @@ public class Canvas extends JComponent {
     public Collection<Integer> getKeysPressed () {
         return Collections.unmodifiableSet(myKeys);
     }
-
+    
+    public void clearInput ()
+    {
+        myKeys.remove((Integer)myLastKeyPressed);
+        myLastKeyPressed = NO_KEY_PRESSED;
+    }
+    
     /**
      * Returns last position of the mouse in the canvas.
      */
@@ -198,9 +204,11 @@ public class Canvas extends JComponent {
     // load model from file chosen by user
     public void loadModel () { //changed to public for load multiple assemblies.
         Factory factory = new Factory();
-        int response = INPUT_CHOOSER.showOpenDialog(null);
-        if (response == JFileChooser.APPROVE_OPTION) {
-            factory.loadModel(mySimulation, INPUT_CHOOSER.getSelectedFile());
+        for (int i = 0; i<2; ++i){
+        	int response = INPUT_CHOOSER.showOpenDialog(null);
+            if (response == JFileChooser.APPROVE_OPTION) {
+                factory.loadModel(mySimulation, INPUT_CHOOSER.getSelectedFile());
+            }
         }
     }
 }

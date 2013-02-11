@@ -121,7 +121,6 @@ public class Factory {
     }
     private WallForce wallCommand(Scanner line){
     	int wallID= line.nextInt();
-    	wallID -= 1;
     	double magnitude = line.nextDouble();
     	double exponent = line.nextDouble();
     	return new WallForce(wallID, magnitude, exponent);

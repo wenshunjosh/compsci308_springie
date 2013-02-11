@@ -21,14 +21,14 @@ public class Vector {
     // "speed" in pixels per second
     private double myMagnitude;
     
-    private boolean myStatus;
+    private boolean myOn;
 
     /**
      * Create a zero vector, i.e., with no magnitude.
      */
     public Vector () {
         this(0, 0);
-        myStatus = true;
+        myOn = true;
     }
 
     /**
@@ -37,7 +37,7 @@ public class Vector {
     public Vector (double angle, double magnitude) {
         setDirection(angle);
         setMagnitude(magnitude);
-        myStatus = true;
+        myOn = true;
     }
 
     /**
@@ -266,23 +266,29 @@ public class Vector {
         }
     }
     public void update(double elapsedTime, Dimension bounds, List<Mass> allMasses){
+    	if (myOn){
+    		updateForce(elapsedTime, bounds, allMasses);
+    	}
     	return;
     }
     
-    public void setStatus(boolean status){
-		myStatus = status;
+    public void updateForce(double elapsedTime, Dimension bounds, List<Mass> allMasses) {
+    	return;
+	}
+    
+    public void setOn(boolean status){
+		myOn = status;
 	}
 	
-    public boolean getStatus(){
-    	return myStatus;
+    public boolean getOn(){
+    	return myOn;
     }
     
-	public void setOppositeStatus(){ //duplicated code????? (same in other forces)
-										//also have to create one in Vector to all at the same time
-		if (myStatus){
-			myStatus = false;
+	public void setOppositeOn(){
+		if (myOn){
+			myOn = false;
 		}else{
-			myStatus = true;
+			myOn = true;
 		}
 	}
 }

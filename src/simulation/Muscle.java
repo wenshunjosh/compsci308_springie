@@ -16,11 +16,14 @@ public class Muscle extends Spring {
 		myAmplitude = amplitude;
 	}
 	
-	public void update(double elapsedTime, Dimension bounds){		
-		updateMyLength(myAmplitude*Math.sin(myPie)); //update free length of Muscle;
-		myPie += myFrequency;
-		
+	public void update(double elapsedTime, Dimension bounds){
 		super.update(elapsedTime, bounds);
 	}
+	
+    public double getLength(){
+    	double muscleLength = myAmplitude*Math.sin(myPie); //update free length of Muscle;
+		myPie += myFrequency;
+		return muscleLength;
+    }
 
 }

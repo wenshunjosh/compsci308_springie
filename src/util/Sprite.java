@@ -2,6 +2,7 @@ package util;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
@@ -204,6 +205,10 @@ public abstract class Sprite {
      */
     public Rectangle getBounds () {
         return myBounds;
+    }
+    
+    public void setCenter(Point point){
+    	myCenter = new Location(point.getX(),point.getY());
     }
 
     /**
