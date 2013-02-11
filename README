@@ -1,0 +1,15 @@
+/**
+*Implementation Details
+*/
+
+Multiple assemblies
+We created a list that stores different assemblies of masses (named myAssemblies), and an int (named myAssemblyNumber) that keeps track of which assembly we are currently at. When "n" is pressed, we add myAssemblyNumber by 1, create the new assembly (if not already there) and add masses into it in the add(Mass) method. To avoid interaction, the assemblies are updated separately.
+
+Mouse dragging
+We created a mass myMouseMass and a spring myMouseSpring in Model for this implement. When mouse is not clicking, both of them are set to null. When mouse clicks, myMouseMass is updated by constantly updating its center based on mouse position. myMouseSpring is first created by calculating the distance between the mouse position and all masses, and is updated just as a normal spring. It does not exert force to myMouseMass since myMouseMass is moving according to the mouse position. But it will exert force to the other Mass it's connected to, and thus will interact with the assembly (and only that specific assembly).
+
+Toggle Forces
+We added a default constructor within each force class. In model we first created a list of all forces with their default values. When Factory reads in any user input force, it will update the default one in the list. Each force in the list has a boolean called myOn, which states whether it's been turned on (implemented in Vector class to avoid duplicated code). In model we created another list that stores all toggle keys. When user presses a toggle key, we find its index in the toggle key list and find and update the corresponding force in the force list.
+
+Change size of walled area
+We added a new Dimension myGameBound in Canvas to distinguish it from the original bound. Each time up arrow or down arrow is pressed, we update that value in Canvas. The update() method in Model will always check the value of myGameBound at the beginning.

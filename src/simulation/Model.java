@@ -32,7 +32,6 @@ public class Model {
     private static final int WALL_LEFT_TOGGLE = KeyEvent.VK_4;
     private static final int INCREASE_WALL_SIZE = KeyEvent.VK_UP;
     private static final int DECREASE_WALL_SIZE = KeyEvent.VK_DOWN;
-    private static final long KEY_COOL_DOWN_TIME = 200;
 	
 	// bounds and input for game
     private Canvas myView;
@@ -46,8 +45,6 @@ public class Model {
     							WALL_TOP_TOGGLE, WALL_RIGHT_TOGGLE, WALL_BOTTOM_TOGGLE, WALL_LEFT_TOGGLE};
     private int[] myWallSizeAdaptors = {10, -10};
     private Integer[] myWallSizeKeys = {INCREASE_WALL_SIZE, DECREASE_WALL_SIZE};
-    private Long myCoolDownTimer1;
-	private Long myCoolDownTimer2;
 	
 	private Mass myMouseMass; //created for mouse interaction
 	private Spring myMouseSpring;
@@ -58,7 +55,6 @@ public class Model {
      */
     public Model (Canvas canvas) {
         myView = canvas;
-        myCoolDownTimer1 = System.currentTimeMillis();
     }
 
     /**
@@ -86,14 +82,10 @@ public class Model {
      */
     public void update (double elapsedTime) {
         Dimension bounds = myView.getGameSize(); //update in case user updates bound size
-        myCoolDownTimer2 = System.currentTimeMillis(); //"Cools down" the keyboard so one press will only result in one update.
-		if (myCoolDownTimer2-myCoolDownTimer1 >= KEY_COOL_DOWN_TIME){
-			myCoolDownTimer1 = myCoolDownTimer2;
-			int keyEvent = myView.getLastKeyPressed();
-				processKeyEvent(keyEvent);
-	        Point mouseEvent = myView.getLastMousePosition();
-	        processMouseEvent(mouseEvent);
-		}
+        int keyEvent = myView.getLastKeyPressed();
+			processKeyEvent(keyEvent);
+        Point mouseEvent = myView.getLastMousePosition();
+        processMouseEvent(mouseEvent);
         for (Spring s : mySprings) {
             s.update(elapsedTime, bounds);
         }
@@ -147,6 +139,7 @@ public class Model {
     	if (keyEvent == CLEAR_ASSEMBLY){
         	mySprings = new ArrayList<Spring>();
         	myAssembly = new ArrayList<ArrayList<Mass>>();
+        	myAssemblyNumber = -1;
         }
         if (keyEvent == NEW_ASSEMBLY){
         	myAssemblyNumber += 1;
