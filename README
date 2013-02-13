@@ -1,4 +1,17 @@
 /**
+*Current Problems (mostly regarding checkStyle)
+*/
+
+1. We are not sure how to get rid of some magic numbers at the bottom of Model, where the forces are added. their indexes in
+the myForces array apparently need to be called.
+
+2. We have trouble getting rid of the duplicated code in WallForce constructors. Both constructors used the same line
+"myWallID = wallID-1". Calling this() does not really work here since the two constructors have different setOn boolean
+values and "this()" will override that.
+
+
+
+/**
 *Implementation Details
 */
 

@@ -108,7 +108,7 @@ public class Canvas extends JComponent {
     
     public void clearInput ()
     {
-        myKeys.remove((Integer)myLastKeyPressed);
+        myKeys.remove(myLastKeyPressed);
         myLastKeyPressed = NO_KEY_PRESSED;
     }
     
@@ -126,7 +126,8 @@ public class Canvas extends JComponent {
         // create a timer to animate the canvas
         myTimer = new Timer(DEFAULT_DELAY, 
             new ActionListener() {
-                public void actionPerformed (ActionEvent e) {
+                @Override
+				public void actionPerformed (ActionEvent e) {
                     step();
                 }
             });
@@ -178,7 +179,7 @@ public class Canvas extends JComponent {
             @Override
             public void keyReleased (KeyEvent e) {
                 myLastKeyPressed = NO_KEY_PRESSED;
-                myKeys.remove((Integer)e.getKeyCode());
+                myKeys.remove(e.getKeyCode());
             }
         });
         myLastMousePosition = NO_MOUSE_PRESSED;

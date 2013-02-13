@@ -1,11 +1,6 @@
 package util;
 
-import java.awt.Dimension;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.List;
-
-import simulation.Mass;
 
 
 /**
@@ -20,15 +15,12 @@ public class Vector {
     private double myAngle;
     // "speed" in pixels per second
     private double myMagnitude;
-    
-    private boolean myOn;
 
     /**
      * Create a zero vector, i.e., with no magnitude.
      */
     public Vector () {
         this(0, 0);
-        myOn = true;
     }
 
     /**
@@ -37,7 +29,6 @@ public class Vector {
     public Vector (double angle, double magnitude) {
         setDirection(angle);
         setMagnitude(magnitude);
-        myOn = true;
     }
 
     /**
@@ -71,6 +62,11 @@ public class Vector {
      */
     public double getMagnitude () {
         return myMagnitude;
+    }
+    
+    
+    protected double getAngle(){
+    	return myAngle;
     }
 
     /**
@@ -265,30 +261,4 @@ public class Vector {
             return Math.abs(a / b - 1) < EPSILON;
         }
     }
-    public void update(double elapsedTime, Dimension bounds, List<Mass> allMasses){
-    	if (myOn){
-    		updateForce(elapsedTime, bounds, allMasses);
-    	}
-    	return;
-    }
-    
-    public void updateForce(double elapsedTime, Dimension bounds, List<Mass> allMasses) {
-    	return;
-	}
-    
-    public void setOn(boolean status){
-		myOn = status;
-	}
-	
-    public boolean getOn(){
-    	return myOn;
-    }
-    
-	public void setOppositeOn(){
-		if (myOn){
-			myOn = false;
-		}else{
-			myOn = true;
-		}
-	}
 }

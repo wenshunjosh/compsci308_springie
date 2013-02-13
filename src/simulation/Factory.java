@@ -2,15 +2,17 @@ package simulation;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
 
 /**
- * XXX
- * 
  * @author Robert C. Duvall
+ * @author Wenshun Liu
+ * @author Josh Waldman
  */
 public class Factory {
     // data file keywords
@@ -24,105 +26,59 @@ public class Factory {
 
     // mass IDs
     Map<Integer, Mass> myMasses = new HashMap<Integer, Mass>();
+    private Processor[] myProcessors = {new ProcessorMass(this),
+    		          new ProcessorSpring(this), new ProcessorMuscle(this),
+    		          new ProcessorGravity(this), new ProcessorViscosity(this),
+    		          new ProcessorCenterMass(this), new ProcessorWall(this)};
+    private String[] myKeywords = {MASS_KEYWORD, SPRING_KEYWORD,
+    	               MUSCLE_KEYWORD, GRAVITY_KEYWORD, VISCOSITY_KEYWORD,
+    	               CENTERMASS_KEYWORD, WALL_KEYWORD};
+    private Model myModel;
 
 
     /**
-     * XXX.
+     * Load the user input from a file.
+     * @param model the simulation model
+     * @param modelFile the file type of the user input
      */
     public void loadModel (Model model, File modelFile) {
+    	myModel = model;
     	try {
             Scanner input = new Scanner(modelFile);
             while (input.hasNext()) {
                 Scanner line = new Scanner(input.nextLine());
                 if (line.hasNext()) {
                     String type = line.next();
-                    	//we realized this is duplicated code
-                    if (MASS_KEYWORD.equals(type)) {
-                        model.add(massCommand(line));
-                    }
-                    else if (SPRING_KEYWORD.equals(type)) {
-                        model.add(springCommand(line));
-                    }
-                    else if (MUSCLE_KEYWORD.equals(type)){
-                    	model.add(muscleCommand(line));
-                    }
-                    else if (GRAVITY_KEYWORD.equals(type)){
-                    	model.add(gravityCommand(line));
-                    }
-                    else if (VISCOSITY_KEYWORD.equals(type)){
-                    	model.add(viscosityCommand(line));
-                    }
-                    else if (CENTERMASS_KEYWORD.equals(type)){
-                    	model.add(centerMassCommand(line));
-                    }
-                    else if (WALL_KEYWORD.equals(type)){
-                    	model.add(wallCommand(line));
+                    List<String> myKeywordsArrayList
+                                        = Arrays.asList(myKeywords);
+                    if (myKeywordsArrayList.contains(type)) {
+                    	int keywordsIndex = myKeywordsArrayList.indexOf(type);
+                    	myProcessors[keywordsIndex].commandLine(line);
+                    } else {
+                    	System.out.println("Error");
                     }
                 }
             }
             input.close();
-        }
-        catch (FileNotFoundException e) {
+    	} catch (FileNotFoundException e) {
             // should not happen because File came from user selection
             e.printStackTrace();
         }
     }
 
-    // create mass from formatted data
-    private Mass massCommand (Scanner line) {
-        int id = line.nextInt();
-        double x = line.nextDouble();
-        double y = line.nextDouble();
-        double mass = line.nextDouble();
-        if (mass<0){
-        	FixedMass result = new FixedMass(x,y,mass);
-        	myMasses.put(id,  result); //tiny duplicated code here
-        	return result;
-        }else{
-        	Mass result = new Mass(x, y, mass);
-        	myMasses.put(id,  result);
-        	return result;
-        }
+    /**
+     * Get the HashMap that stores information of the masses and their indexes.
+     * @return myMasses
+     */
+    public Map<Integer, Mass> getMasses() {
+    	return myMasses;
     }
-    
-    // create spring from formatted data
-    private Spring springCommand (Scanner line) {
-        Mass m1 = myMasses.get(line.nextInt());
-        Mass m2 = myMasses.get(line.nextInt());
-        double restLength = line.nextDouble();
-        double ks = line.nextDouble();
-        return new Spring(m1, m2, restLength, ks);
-    }
-    
-    private Muscle muscleCommand (Scanner line){
-    	Mass m1 = myMasses.get(line.nextInt());
-        Mass m2 = myMasses.get(line.nextInt());
-        double restLength = line.nextDouble();
-        double ks = line.nextDouble();
-        double a = line.nextDouble();
-        return new Muscle(m1, m2, restLength, ks, a);
-    }
-    
-    private GravityForce gravityCommand (Scanner line){
-    	double angle = line.nextDouble();
-    	double magnitude = line.nextDouble();
-    	return new GravityForce(angle, magnitude);
-    }
-    
-    private ViscosityForce viscosityCommand (Scanner line){
-    	double magnitude = line.nextDouble();
-    	return new ViscosityForce(magnitude);
-    }
-    
-    private CenterMassForce centerMassCommand (Scanner line){
-    	double magnitude = line.nextDouble();
-    	double exponent = line.nextDouble();
-    	return new CenterMassForce (magnitude, exponent);
-    }
-    private WallForce wallCommand(Scanner line){
-    	int wallID= line.nextInt();
-    	double magnitude = line.nextDouble();
-    	double exponent = line.nextDouble();
-    	return new WallForce(wallID, magnitude, exponent);
+
+    /**
+     * Get the model of simulation.
+     * @return myModel
+     */
+    public Model getModel() {
+    	return myModel;
     }
 }

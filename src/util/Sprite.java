@@ -9,10 +9,10 @@ import java.awt.geom.Point2D;
 
 /**
  * This class represents a shape that moves on its own.
- * 
+ *
  * Note, Sprite is a technical term:
  *   http://en.wikipedia.org/wiki/Sprite_(computer_graphics)
- *   
+ *
  * @author Robert C. Duvall
  */
 public abstract class Sprite {
@@ -34,7 +34,7 @@ public abstract class Sprite {
     private Pixmap myOriginalView;
     // cached for efficiency
     private Rectangle myBounds;
-    
+
 
     /**
      * Create a shape at the given position, with the given size.

@@ -5,25 +5,41 @@ import java.util.List;
 
 import util.Vector;
 
-public class ViscosityForce extends Vector {
-	private static final double DEFAULT_MAGNITUDE = 100;
-	
-	private double myMagnitude;
-	
-	public ViscosityForce(){
-		this(DEFAULT_MAGNITUDE);
-		setOn(false); //how to get rid of this repeated code?????
+/**
+ * @author Wenshun Liu
+ * @author Josh Waldman
+ */
+public class ViscosityForce extends Force {
+
+	/**
+	 * Construct the default viscosity force.
+	 */
+	public ViscosityForce() {
+		super();
 	}
-	
+
+	/**
+	 * Construct the viscosity force based on user input.
+	 */
 	public ViscosityForce (double magnitude) {
-		myMagnitude = magnitude;
-		setOn(true);
+		super(0 , magnitude);
 	}
-	
-	public void updateForce(double elapsedTime, Dimension bounds, List<Mass> allMasses){
-		for (Mass m: allMasses){
-			Vector force=new Vector(m.getAcceleration().getDirection()*-1, myMagnitude);
-	   		m.applyForce(force);
-		}
+
+	/**
+	 * Apply viscosity force to the mass assembly.
+	 */
+	@Override
+	public void updateForce(double elapsedTime, Dimension bounds,
+			                                List<Mass> allMasses) {
+		super.updateForce(elapsedTime, bounds, allMasses);
+	}
+
+	/**
+	 * Calculate the return the viscosity force applied to a specific mass.
+	 */
+	@Override
+	public Vector getForce(Mass m) {
+		return new Vector(m.getAcceleration().getDirection() * (-1),
+				                                getMagnitude());
 	}
 }
